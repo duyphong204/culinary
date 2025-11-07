@@ -1,23 +1,49 @@
-// const mongoose = require('mongoose');
-
-// const userSchema = new mongoose.Schema({
-//   username: { type: String, required: true, unique: true },
-//   password: { type: String, required: true },
-//   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Location' }]
-// });
-
-// module.exports = mongoose.model('User', userSchema);
-
-
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ['user','chef','admin'], default: 'user' }, // Thêm role
-  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Location' }],
-  profilePicture: String, // avatar
-  preferences: { foodTypes: [String], allergens: [String] }, // sở thích cá nhân
+const uploadSchema = new mongoose.Schema({
+  imageUrl: { type: String, required: true },
+  recognizedDish: { type: String },
+  uploadedAt: { type: Date, default: Date.now },
 });
+
+const userSchema = new mongoose.Schema(
+  {
+    username: { type: String, required: true, unique: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+      hashedPassword: {
+      type: String,
+      required: true,
+    },
+    profilePic: { type: String, default: '' },
+
+    role: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Role',
+      required: true,
+    },
+
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Location' }],
+
+    uploads: [uploadSchema],
+
+    status: {
+      type: String,
+      enum: ['active', 'blocked'],
+      default: 'active',
+    },
+
+    onlineStatus: {
+      type: String,
+      enum: ['online', 'offline', 'away'],
+      default: 'offline',
+    },
+
+    lastActiveAt: { type: Date },
+    is_ban: { type: Boolean, default: false },
+  },
+  {
+    timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' },
+  }
+);
 
 export default mongoose.model('User', userSchema);

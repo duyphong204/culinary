@@ -8,6 +8,8 @@ import rootRoutes from './src/routes/rootRoutes.js';
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './src/config/swaggerConfig.js';
 
 app.use(cors());
 app.use(express.json());
@@ -16,7 +18,14 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
+  
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'Culinary Hub API Docs',
+  }));
 app.use(rootRoutes);
+
+
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
