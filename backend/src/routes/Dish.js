@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import Dish from '../models/Dish.js';
+
 const router = express.Router();
-const Dish = require('../models/Dish');
 
 // Lấy thông tin dish theo ID
 router.get('/:id', async (req, res) => {
@@ -22,4 +23,4 @@ router.get('/location/:locationId', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

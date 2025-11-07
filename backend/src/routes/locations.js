@@ -1,11 +1,11 @@
-const express = require("express");
+import express from "express";
+import Location from "../models/Location.js";
+import User from "../models/User.js";
+import Dish from "../models/Dish.js";
+import axios from "axios";
+import auth from "../middleware/auth.js";
+import { v2 as cloudinary } from "cloudinary";
 const router = express.Router();
-const Location = require("../models/Location");
-const User = require("../models/User");
-const Dish = require("../models/Dish");
-const axios = require("axios");
-const auth = require("../middleware/auth");
-const cloudinary = require("cloudinary").v2;
 
 // OpenWeather API
 const getWeather = async (lat, lng) => {
@@ -156,4 +156,4 @@ router.post("/upload", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

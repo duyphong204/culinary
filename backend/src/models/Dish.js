@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const dishSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -12,4 +12,4 @@ const dishSchema = new mongoose.Schema({
   locationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Location' }
 });
 
-module.exports = mongoose.model('Dish', dishSchema);
+export default mongoose.model('Dish', dishSchema);

@@ -16,7 +16,7 @@
 
 // module.exports = mongoose.model('Location', locationSchema);
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const locationSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -40,4 +40,4 @@ const locationSchema = new mongoose.Schema({
   weather: String,
 });
 
-module.exports = mongoose.model("Location", locationSchema);
+export default mongoose.model("Location", locationSchema);

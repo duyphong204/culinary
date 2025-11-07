@@ -1,12 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const http = require('http');
-const { Server } = require('socket.io');
-const locationRoutes = require('./src/routes/locations');
-const authRoutes = require('./src/routes/auth');
-const dishRoutes = require('./src/routes/Dish')
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import http from 'http';
+import { Server } from 'socket.io';
+import rootRoutes from './src/routes/rootRoutes.js';
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
@@ -18,9 +16,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
-app.use('/api/locations', locationRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/dish',dishRoutes)
+app.use(rootRoutes);
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
