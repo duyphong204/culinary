@@ -1,0 +1,15 @@
+{
+    "stream": {
+        "not_found": "Stream not found",
+        "room_full": "Stream room is full",
+        "join_failed": "Failed to join stream",
+        "started": "Stream started",
+        "ended": "Stream ended",
+        "viewer_joined": "Viewer joined",
+        "viewer_left": "Viewer left"
+    },
+    "error": {
+        "rate_limit": "Too many requests",
+        "connection_limit": "Too many connections"
+    }
+}

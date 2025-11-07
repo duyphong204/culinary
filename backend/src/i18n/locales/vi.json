@@ -1,0 +1,15 @@
+{
+    "stream": {
+        "not_found": "Không tìm thấy stream",
+        "room_full": "Phòng stream đã đầy",
+        "join_failed": "Không thể tham gia stream",
+        "started": "Stream đã bắt đầu",
+        "ended": "Stream đã kết thúc",
+        "viewer_joined": "Người xem đã tham gia",
+        "viewer_left": "Người xem đã rời"
+    },
+    "error": {
+        "rate_limit": "Quá nhiều yêu cầu",
+        "connection_limit": "Quá nhiều kết nối"
+    }
+}

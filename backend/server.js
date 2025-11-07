@@ -3,46 +3,56 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import http from 'http';
-import { Server } from 'socket.io';
 import rootRoutes from './src/routes/rootRoutes.js';
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './src/config/swaggerConfig.js';
+import { initializeSocket } from './src/socket/index.js';
+import mediasoupServer from './src/webrtc/index.js';
+import compression from 'compression';
+import helmet from 'helmet';
 
-app.use(cors());
-app.use(express.json());
+const app = express();
+const server = http.createServer(app);
 
+app.use(helmet());
+app.use(compression());
+app.use(cors({
+  origin: process.env.CLIENT_URL?.split(',') || "*",
+  credentials: true,
+}));
+app.use(express.json({ limit: '10mb' }));
+
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB error:', err));
 
-  
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'Culinary Hub API Docs',
-  }));
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Culinary Hub API Docs',
+}));
+
+// Routes
 app.use(rootRoutes);
 
-
-
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-  socket.on('join-stream', (room) => {
-    socket.join(room);
-    socket.to(room).emit('user-joined', socket.id);
-    console.log(`User ${socket.id} joined room ${room}`);
+// Initialize MediaSoup WebRTC server
+mediasoupServer.initialize()
+  .then(() => {
+    console.log('✅ MediaSoup WebRTC server initialized');
+    
+    // Initialize Socket.io
+    const io = initializeSocket(server);
+    
+    // Start server
+    const PORT = process.env.PORT || 5000;
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📡 Socket.io ready for livestream`);
+      console.log(`🎥 WebRTC (MediaSoup) ready for video streaming`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Failed to initialize MediaSoup:', err);
+    process.exit(1);
   });
-  socket.on('signal', (data) => {
-    io.to(data.to).emit('signal', { from: socket.id, signal: data.signal });
-  });
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
-
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
